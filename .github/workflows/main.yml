@@ -23,8 +23,12 @@ jobs:
         aws-region: us-east-1
     - name: install npm modules
       run: npm install && npm run build
-    - name: show iam users
-      run: aws iam list-users
+    - name: delete existing objects from s3
+      run: aws s3 rm s3://hosting-bucket-one --recursive
+    # - name: upload build to s3 bucket
+      # run: 
+    - name: Deploy
+      run: aws s3 sync ./build s3://hosting-bucket-one
     # - name: Use Node.js ${{ matrix.node-version }}
     #   uses: actions/setup-node@v1
     #   with:
