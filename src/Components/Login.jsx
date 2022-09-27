@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.css";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import user from "../assets/user.jpg";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -21,7 +21,10 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const userCreated = () => toast("user created Successfully!");
   const error = () => toast("user not created!");
-
+  const userNameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
@@ -29,19 +32,27 @@ const Login = () => {
       password: password,
       email: email,
     };
+    userNameRef.current.value="";
+    emailRef.current.value="";
+    passwordRef.current.value="";
     axios
       .post(
         "https://q53ogbw9tc.execute-api.us-east-1.amazonaws.com/registerUser",
         data
       )
-      .then(() => userCreated())
+      .then(res => {
+        console.log(res);
+        userCreated();
+      })
       .catch((err) => error());
   };
   return (
     <>
       <Container>
         <ToastContainer />
-        <h1>Sign Up</h1>
+        <div style={styles.makeCenter}>
+            <h1>Sign Up</h1>
+        </div>
         <div style={styles.makeCenter}>
           <img
             style={{ borderRadius: "50%", width: "20%", height: "20%" }}
@@ -55,6 +66,7 @@ const Login = () => {
             <Form.Label>Username</Form.Label>
             <Form.Control
               placeholder="Enter username"
+              ref={userNameRef}
               onChange={(e) => setUserName(e.target.value)}
             />
           </Form.Group>
@@ -63,6 +75,7 @@ const Login = () => {
             <Form.Control
               type="email"
               placeholder="Enter email"
+              ref={emailRef}
               onChange={(e) => setEmail(e.target.value)}
             />
             <Form.Text className="text-muted">
@@ -75,6 +88,7 @@ const Login = () => {
             <Form.Control
               type="password"
               placeholder="Password"
+              ref={passwordRef}
               onChange={(e) => setPassword(e.target.value)}
             />
           </Form.Group> 
