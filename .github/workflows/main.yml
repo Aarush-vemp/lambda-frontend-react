@@ -15,32 +15,29 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with: 
-        aws-access-key-id: ${{ secrets.USER_EIGHT_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.USER_EIGHT_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
-    - name: install npm modules
-      run: npm install && npm run build
-    - name: delete existing objects from s3
-      run: aws s3 rm s3://hosting-bucket-one --recursive
-    # - name: upload build to s3 bucket
-      # run: 
-    - name: Deploy
-      run: aws s3 sync ./build s3://hosting-bucket-one
-    # - name: Use Node.js ${{ matrix.node-version }}
-    #   uses: actions/setup-node@v1
-    #   with:
-    #     node-version: ${{ matrix.node-version }}
-    
-    #   uses: serverless/github-action@master
-    #   with:
-    #     args: deploy
-    #   env:
-    #     # AWS_ACCESS_KEY_ID: ${{secrets.dev.AWS_ACCESS_KEY_ID}}
-    #     # AWS_SECRET_ACCESS_KEY: ${{secrets.dev.AWS_SECRET_ACCESS_KEY}}
-    #     # SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-    #     # or if using AWS credentials directly
-    #     AWS_ACCESS_KEY_ID: AKIA36UHBMUYX5AKYZE5
-    #     AWS_SECRET_ACCESS_KEY: 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
+    # - name: Configure AWS Credentials
+    #   uses: aws-actions/configure-aws-credentials@v1
+    #   with: 
+    #     aws-access-key-id: ${{ secrets.USER_EIGHT_ACCESS_KEY_ID }}
+    #     aws-secret-access-key: ${{ secrets.USER_EIGHT_SECRET_ACCESS_KEY }}
+    #     aws-region: us-east-1
+    # - name: install npm modules
+    #   run: npm install && npm run build
+    # - name: delete existing objects from s3
+    #   run: aws s3 rm s3://hosting-bucket-one --recursive
+    # # - name: upload build to s3 bucket
+    #   # run: 
+    # - name: Deploy
+    #   run: aws s3 sync ./build s3://hosting-bucket-one
+
+    name: upload-build 
+    uses: jeanlescure/react-deploy-to-s3-action@main
+      with:
+        args: --acl public-read --follow-symlinks --delete
+      env:
+        NODE_ENV: development # optional: defaults to production
+        AWS_S3_BUCKET: hosting-bucket-one
+        AWS_ACCESS_KEY_ID: ${{ secrets.USER_EIGHT_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.USER_EIGHT_SECRET_ACCESS_KEY }}
+        AWS_REGION: us-east-1 # optional: defaults to us-east-1
+        SOURCE_DIR: build # optional: defaults to public
